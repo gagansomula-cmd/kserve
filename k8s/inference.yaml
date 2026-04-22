@@ -8,3 +8,44 @@ spec:
     serviceAccountName: sa-s3-access
     sklearn:
       storageUri: s3://kserve-model-bucket/models/churn_model.pkl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: churn-predictor-predictor
+  namespace: churn-model
+  labels:
+    app: isvc.churn-predictor-predictor
+    component: predictor
+    serving.kserve.io/inferenceservice: churn-predictor
+spec:
+  type: LoadBalancer
+  ports:
+    - name: churn-predictor-predictor
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: isvc.churn-predictor-predictor
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: churn-predictor-ingress
+  namespace: churn-model
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - host: churn-predictor.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: churn-predictor-predictor
+                port:
+                  number: 80
