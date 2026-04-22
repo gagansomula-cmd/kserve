@@ -1,0 +1,9 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: churn-predictor
+  namespace: churn-model
+spec:
+  predictor:
+    sklearn:
+      storageUri: s3://kserve-model-bucket/models/churn_model.pkl
