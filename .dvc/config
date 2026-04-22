@@ -1,0 +1,6 @@
+[core]
+    remote = myremote-s3
+['remote "myremote"']
+    url = s3://kserve-model-bucket
+['remote "myremote-s3"']
+    url = s3://mlops-trainig-679631209574-us-east-1-an
